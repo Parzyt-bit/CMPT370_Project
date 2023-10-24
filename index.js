@@ -26,16 +26,48 @@ app.get("/", (req, res) => {
 // on connection, we can log/print, that the "a user is connected"
 let num_user = 0;
 io.on("connection", (socket) => {
-  num_user = num_user + 1;
-  console.log(`${num_user} users connected`);
+  // num_user = num_user + 1;
+  // console.log(`${num_user} user connected`);
+  console.log("a user connected");
+
   socket.on("disconnect", () => {
-     num_user = num_user - 1;
-    console.log("a user disconnected");
-     console.log(`${num_user} users connected`);
+    console.log("user disconnected");
+    // num_user = num_user - 1;
+    // console.log(`${num_user} user connected`);
   });
+
+  socket.on("createGame", () => {
+    const roomUniqueID = makeid(6); // unique id to enter a room
+    rooms[roomUniqueID] = {}; // adding an entry to the rooms (should be only 2 rooms)
+    /**
+     * Client wants to create a game, and
+     * server will return a new game
+     */
+    socket.join(roomUniqueID); // connected the incoming client to this room
+    socket.emit("newGame", { roomUniqueID }); // emitting an event to the client
+  });
+
+  /**
+   * To be implemented at the last
+   */
+  socket.on("endGame", () => {});
 });
 
 // running the server on 3000 (port number)
 server.listen(3000, () => {
   console.log("listening on *:3000");
 });
+
+// Creates a random string involving all capital/non-capital english letters of 'length' characters
+function makeid(length) {
+  let result = "";
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const charactersLength = characters.length;
+  let counter = 0;
+  while (counter < length) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    counter += 1;
+  }
+  return result;
+}
