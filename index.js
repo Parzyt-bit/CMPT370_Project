@@ -26,13 +26,12 @@ app.get("/", (req, res) => {
 // on connection, we can log/print, that the "a user is connected"
 let num_user = 0;
 io.on("connection", (socket) => {
-  // num_user = num_user + 1;
-  // console.log(`${num_user} user connected`);
-  console.log("a user connected");
+  num_user = num_user + 1;
+  console.log(`${num_user} users connected`);
   socket.on("disconnect", () => {
-    console.log("user disconnected");
-    // num_user = num_user - 1;
-    // console.log(`${num_user} user connected`);
+     num_user = num_user - 1;
+    console.log("a user disconnected");
+     console.log(`${num_user} users connected`);
   });
 });
 
